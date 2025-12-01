@@ -1,0 +1,11 @@
+name = "aoc_2025"
+description = ""
+version = "0.1.0-dev"
+
+authors = ["Alexandre Boutrik"]
+maintainers = ["Alexandre Boutrik <alexandreboutrik@protonmail.ch>"]
+licenses = "MIT"
+website = ""
+tags = []
+
+executables = ["main"]

@@ -1,0 +1,23 @@
+with "config/aoc_2025_config.gpr";
+project Aoc_2025 is
+
+   for Source_Dirs use ("src/", "config/", "src/days");
+   for Object_Dir use "obj/" & Aoc_2025_Config.Build_Profile;
+   for Create_Missing_Dirs use "True";
+   for Exec_Dir use "bin";
+   for Main use ("main.adb");
+
+   package Compiler is
+      for Default_Switches ("Ada") use Aoc_2025_Config.Ada_Compiler_Switches
+		  & ("-gnat2022", "-gnatyN");
+   end Compiler;
+
+   package Binder is
+      for Switches ("Ada") use ("-Es"); --  Symbolic traceback
+   end Binder;
+
+   package Install is
+      for Artifacts (".") use ("share");
+   end Install;
+
+end Aoc_2025;
