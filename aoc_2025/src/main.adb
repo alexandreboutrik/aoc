@@ -1,6 +1,7 @@
 with Ada.Text_IO; use Ada.Text_IO;
 with Ada.Command_Line; use Ada.Command_Line;
 
+with Day_02;
 with Day_01;
 
 procedure Main is
@@ -24,8 +25,11 @@ begin
    Day_Number := Parse_Argument;
 
    case Day_Number is
+		when 2 =>
+			Day_02.Run;
+
 		when 1 =>
-		   Day_01.Run;
+			Day_01.Run;
 
 		when 0 =>
 			Put_Line("Usage: ./bin/aoc_2025 <day_number>");
