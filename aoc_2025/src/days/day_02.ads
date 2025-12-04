@@ -1,3 +1,5 @@
+with Ada.Text_IO;
+
 package Day_02
 	with SPARK_Mode => On
 is
@@ -22,6 +24,9 @@ is
 		Global => null,
 		Pre => Count <= Max_Data;
 
-	procedure Run;
+	procedure Run (File : in out Ada.Text_IO.File_Type)
+	with
+		Global => (In_Out => Ada.Text_IO.File_System),
+		Pre    => Ada.Text_IO.Is_Open(File);
 
 end Day_02;

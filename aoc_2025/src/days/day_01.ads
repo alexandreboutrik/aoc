@@ -45,9 +45,10 @@ is
 		-- We cannot find more '0's than the number of instructions we ran
 		Post   => Solve'Result <= Count;
 
-	procedure Run
-		-- We modify the file system
-		with Global => (In_Out => Ada.Text_IO.File_System);
+	procedure Run (File : in out Ada.Text_IO.File_Type)
+		with
+			Global => (In_Out => Ada.Text_IO.File_System),
+			Pre    => Ada.Text_IO.Is_Open(File);
 
 	-- Run may crash (e.g. File Not Found)
 	pragma Annotate (GNATprove, Might_Not_Return, Run);

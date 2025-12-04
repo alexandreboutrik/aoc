@@ -1,7 +1,5 @@
 with Ada.Text_IO; use Ada.Text_IO;
 
-with Safe_IO; use Safe_IO;
-
 package body Day_01
 	with SPARK_Mode => On
 is
@@ -41,13 +39,9 @@ is
 		return Solution;
 	end Solve;
 
-	procedure Run is
-		-- For now, because parsing is always hard to prove formally.
-		pragma SPARK_Mode (Off);
-
-		Input_File  : File_Type;
-		Open_Result : File_Status;
-
+	procedure Run (File : in out File_Type)
+		with SPARK_Mode => Off
+	is
 		Line       : String (1 .. 20);
 		Last       : Natural;
 
@@ -60,43 +54,31 @@ is
 		-- Temporary variable to gold the parsed number before checking range
 		Tmp : Integer;
 	begin
-		Try_Open(Input_File, "input/day_01.txt", Open_Result);
+		while not End_Of_File(File) loop
+			Get_Line(File, Line, Last);
 
-		case Open_Result is
-			when Success =>
-				while not End_Of_File(Input_File) loop
-					Get_Line(Input_File, Line, Last);
+			if Last > 1 and then Count < Max_Instructions then
+				Tmp := Integer'Value(Line(2 .. Last));
 
-					if Last > 1 and then Count < Max_Instructions then
-						Tmp := Integer'Value(Line(2 .. Last));
+				if Tmp in Shift_Amount then
+					Count := Count + 1;
+					Instructions(Count).Value := Tmp;
 
-						if Tmp in Shift_Amount then
-							Count := Count + 1;
-							Instructions(Count).Value := Tmp;
+					if Line(1) = 'L' then
+						Instructions(Count).Dir := Left;
+					else
+						Instructions(Count).Dir := Right;
+					end if;
 
-							if Line(1) = 'L' then
-								Instructions(Count).Dir := Left;
-							else
-								Instructions(Count).Dir := Right;
-							end if;
+				else
+					Put_Line("Warning: Value out of range ->" & Tmp'Image);
+				end if; -- if in Shift_Amount
+			end if; -- if Last, Count
+		end loop; -- while
 
-						else
-							Put_Line("Warning: Value out of range ->" 
-								& Tmp'Image);
-						end if; -- if in Shift_Amount
-					end if; -- if Last, Count
-				end loop; -- while
+		Result := Solve(Instructions, Count);
 
-				Close(Input_File);
-
-				Result := Solve(Instructions, Count);
-
-				Put_Line("Solution:" & Result'Image);
-
-		when others =>
-			Put_LIne("Day 01 cannot continue due to previous error.");
-
-		end case;
+		Put_Line("Solution:" & Result'Image);
 	end Run;
 
 end Day_01;
