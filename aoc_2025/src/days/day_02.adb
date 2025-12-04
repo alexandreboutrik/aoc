@@ -1,5 +1,7 @@
 with Ada.Text_IO; use Ada.Text_IO;
 
+with Safe_IO; use Safe_IO;
+
 package body Day_02
 	with SPARK_Mode => On
 is
@@ -79,7 +81,8 @@ is
 	procedure Run is
 		pragma SPARK_Mode (Off);
 
-		Input_File : File_Type;
+		Input_File  : File_Type;
+		Open_Result : File_Status;
 
 		package ID_IO is new Ada.Text_IO.Modular_IO(ID);
 
@@ -94,29 +97,36 @@ is
 
 		Result : ID;
 	begin
-		Open(Input_File, In_File, "input/day_02.txt");
+		Try_Open(Input_File, "input/day_02.txt", Open_Result);
 
-		while not End_Of_File(Input_File) loop
-			if Count < Max_Data then
-				ID_IO.Get(Input_File, Lower);
-				Ada.Text_IO.Get(Input_File, Dummy);		-- '-'
-				ID_IO.Get(Input_File, Upper);
+		case Open_Result is
+			when Success =>
+				while not End_Of_File(Input_File) loop
+					if Count < Max_Data then
+						ID_IO.Get(Input_File, Lower);
+						Ada.Text_IO.Get(Input_File, Dummy);		-- '-'
+						ID_IO.Get(Input_File, Upper);
 
-				Count := Count + 1;
-				Input_Data(Data_Index(Count)).Lower_Bound := Lower;
-				Input_Data(Data_Index(Count)).Upper_Bound := Upper;
+						Count := Count + 1;
+						Input_Data(Data_Index(Count)).Lower_Bound := Lower;
+						Input_Data(Data_Index(Count)).Upper_Bound := Upper;
 
-				if not End_Of_File(Input_File) then
-					Ada.Text_IO.Get(Input_File, Dummy);	-- ','
-				end if;
-			end if; -- if Count
-		end loop; -- while
+						if not End_Of_File(Input_File) then
+							Ada.Text_IO.Get(Input_File, Dummy);	-- ','
+						end if;
+					end if; -- if Count
+				end loop; -- while
 
-		Close(Input_File);
+				Close(Input_File);
 
-		Result := Solve(Input_Data, Data_Index(Count));
+				Result := Solve(Input_Data, Data_Index(Count));
 
-		Put_Line("Solution:" & Result'Image);
+				Put_Line("Solution:" & Result'Image);
+
+			when others =>
+				Put_Line("Day 02 cannot continue due to previous error.");
+
+		end case;
 	end Run;
 
 end Day_02;
