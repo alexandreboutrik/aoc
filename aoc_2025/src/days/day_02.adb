@@ -3,7 +3,6 @@ with Ada.Text_IO; use Ada.Text_IO;
 package body Day_02
 	with SPARK_Mode => On
 is
-
 	function Is_Invalid (Value : ID) return Boolean
 	is
 		Limit : constant := 20;
@@ -118,7 +117,6 @@ is
 		Result := Solve(Input_Data, Data_Index(Count));
 
 		Put_Line("Solution:" & Result'Image);
-
 	end Run;
 
 end Day_02;

@@ -5,7 +5,6 @@ with Day_02;
 with Day_01;
 
 procedure Main is
-
 	Day_Number : Integer;
 
 	function Parse_Argument return Integer is
@@ -15,12 +14,9 @@ procedure Main is
 		end if;
 
 		return Integer'Value(Argument(1));
-
 	exception
 		when others => return -1;
-
 	end Parse_Argument;
-
 begin
    Day_Number := Parse_Argument;
 
@@ -38,5 +34,4 @@ begin
 			Put_Line("Error: Day" & Day_Number'Image & "not implemented.");
 
 	end case;
-
 end Main;
