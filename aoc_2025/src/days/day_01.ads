@@ -30,26 +30,24 @@ is
 	type Instruction_Array is array (Instruction_Index) of Instruction;
 
 	function Increment (Value : DP; Amount : Shift_Amount) return DP
-		with
-			Global => null,
-			Post   => Increment'Result = (Value + Amount) mod 100;
+		with Global => null,
+			 Post   => Increment'Result = (Value + Amount) mod 100;
+
 	function Decrement (Value : DP; Amount : Shift_Amount) return DP
-		with
-			Global => null,
-			Post   => Decrement'Result = (Value - Amount) mod 100;
+		with Global => null,
+			 Post   => Decrement'Result = (Value - Amount) mod 100;
 
 	function Solve
 		(List  : Instruction_Array;
 		 Count : Loaded_Count) return Loaded_Count
-		with
-			Global => null,
-			-- We cannot find more '0's than the number of instructions we ran
-			Post   => Solve'Result <= Count;
+	with
+		Global => null,
+		-- We cannot find more '0's than the number of instructions we ran
+		Post   => Solve'Result <= Count;
 
 	procedure Run
-		with
-			-- We modify the file system
-			Global => (In_Out => Ada.Text_IO.File_System);
+		-- We modify the file system
+		with Global => (In_Out => Ada.Text_IO.File_System);
 
 	-- Run may crash (e.g. File Not Found)
 	pragma Annotate (GNATprove, Might_Not_Return, Run);

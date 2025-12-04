@@ -13,14 +13,12 @@ is
 		return (Value - Amount) mod 100;
 	end Decrement;
 
-
 	function Solve
 		(List  : Instruction_Array;
 		 Count : Loaded_Count) return Loaded_Count
 	is
 		Dial     : DP := 50;
 		Solution : Loaded_Count := 0;
-
 	begin
 		for I in 1 .. Count loop
 			pragma Loop_Invariant (Solution >= 0);
@@ -29,20 +27,16 @@ is
 
 			if List(I).Dir = Right then
 				Dial := Increment(Dial, List(I).Value);
-
 			else
 				Dial := Decrement(Dial, List(I).Value);
-
 			end if;
 
 			if Dial = 0 then
 				Solution := Solution + 1;
 			end if;
-
 		end loop;
 
 		return Solution;
-
 	end Solve;
 
 	procedure Run is
@@ -61,7 +55,6 @@ is
 
 		-- Temporary variable to gold the parsed number before checking range
 		Tmp : Integer;
-
 	begin
 		Open(Input_File, In_File, "input/day_01.txt");
 
@@ -83,11 +76,8 @@ is
 
 				else
 					Put_Line("Warning: Value out of range ->" & Tmp'Image);
-
 				end if; -- if in Shift_Amount
-
 			end if; -- if Last, Count
-
 		end loop; -- while
 
 		Close(Input_File);
@@ -95,7 +85,6 @@ is
 		Result := Solve(Instructions, Count);
 
 		Put_Line("Solution:" & Result'Image);
-
 	end Run;
 
 end Day_01;
