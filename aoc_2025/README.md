@@ -2,16 +2,18 @@
 
 ![Language](https://img.shields.io/badge/language-weaponized_pascal-blue) ![Correctness](https://img.shields.io/badge/correctness-proven_ish-yellowgreen) ![Loop Invariants](https://img.shields.io/badge/loop_invariants-hallucinated-blueviolet)
 
-For this year's challenge, I have chosen SPARK 2014 / Ada. My goal is to leverage the features of SPARK to write formally verifiable solutions where possible.
+For this year's challenge, I have chosen SPARK/Ada. My goal is to leverage the features of SPARK to write formally verifiable solutions where possible.
 
 ## Project Structure
 
 ```
 aoc_2025/
 ├── alire.toml       # Project configuration
-├── input/           # Puzzle input files (e.g., day\_01.txt)
+├── input/           # Puzzle input files
+│   ├── day_01.txt
+│   └── ...
 ├── src/
-│   ├── main.adb     # Main entry point and argument parsing
+│   ├── main.adb     # Main entry point
 │   └── days/        # Individual solution packages
 │       ├── day_01.adb
 │       └── ...
@@ -22,8 +24,9 @@ aoc_2025/
 
 ```
 alr run -a <day_number>
-# To prove the correctness of the code using the gnatprove:
-alr exec -- gnatprove -P aoc_2025.gpr
+
+# To prove the correctness of the code using gnatprove:
+alr exec -- gnatprove -P aoc_2025.gpr --level=4
 ```
 
 ## LICENSE
