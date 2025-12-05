@@ -3,33 +3,11 @@ with Ada.Text_IO; use Ada.Text_IO;
 package body Day_02
 	with SPARK_Mode => On
 is
-	function Is_Invalid (Value : ID) return Boolean
+	function Get_Number_Length (Value : ID) return Digits_Length
 	is
-		Limit : constant := 20;
-
-		type Digits_Length is mod Limit;
-
-		Length   : Digits_Length := 0;
-		Tmp      : ID            := Value;
-		Divisor  : ID;
-		Half_Len : Integer;
-
-		-- Size is half of Digits_Length
-		type Power_Table is array (0 .. Limit/2) of ID;
-		Powers : constant Power_Table :=
-			[1,
-			 10,
-			 100,
-			 1_000,
-			 10_000,
-			 100_000,
-			 1_000_000,
-			 10_000_000,
-			 100_000_000,
-			 1_000_000_000,
-			 10_000_000_000];
+		Length : Digits_Length := 0;
+		Tmp    : ID            := Value;
 	begin
-		-- Calculate the number of digits
 		loop
 			pragma Loop_Invariant (Length >= 0);
 			pragma Loop_Variant   (Decreases => Tmp);
@@ -39,6 +17,18 @@ is
 
 			exit when Tmp = 0;
 		end loop;
+
+		return Length;
+	end Get_Number_Length;
+
+	function PT1_Is_Invalid (Value : ID) return Boolean
+	is
+		Length   : Digits_Length;
+		Tmp      : ID            := Value;
+		Divisor  : ID;
+		Half_Len : Integer;
+	begin
+		Length := Get_Number_Length(Value);
 
 		if Length mod 2 /= 0 then
 			return False;
@@ -50,13 +40,57 @@ is
 		Divisor := Powers(Half_Len);
 
 		return (Value / Divisor) = (Value mod Divisor);
-	end Is_Invalid;
+	end PT1_Is_Invalid;
 
-	function Solve
-		(Input_Data : Data_Array;
-		 Count      : Data_Index) return ID
+	function PT2_Is_Invalid (Value : ID) return Boolean
 	is
-		Sum : ID := 0;
+		Length_DL     : Digits_Length;
+		Length        : Natural;
+		Chunk_Size    : Natural;
+		Num_Chunks    : Natural;
+		Pattern       : ID;
+		Multiplier    : ID;
+	begin
+		Length_DL := Get_Number_Length(Value);
+		Length := Natural(Length_DL);
+
+		for K in 1 .. Length / 2 loop
+			Chunk_Size := K;
+
+			pragma Loop_Invariant (Chunk_Size >= 1);
+			pragma Loop_Invariant (Chunk_Size <= Length / 2);
+
+			if Length mod Chunk_Size = 0 then
+				Num_Chunks := Length / Chunk_Size;
+
+				if (Length - Chunk_Size) < Limit then
+					Pattern := Value / Powers(Length - Chunk_Size);
+
+					Multiplier := 0;
+					for I in 0 .. Num_Chunks - 1 loop
+						pragma Loop_Invariant (Num_Chunks * Chunk_Size = Length);
+						pragma Loop_Invariant (I < Num_Chunks);
+						pragma Loop_Invariant (I * Chunk_Size <= Powers'Last);
+
+						Multiplier := Multiplier + Powers(I * Chunk_Size);
+					end loop;
+
+					if Value = (Pattern * Multiplier) then
+						return True;
+					end if;
+				end if;
+			end if;
+		end loop;
+
+		return False;
+	end PT2_Is_Invalid;
+
+	procedure Solve
+		(Input_Data : Data_Array;
+		 Count      : Data_Index)
+	is
+		PT1_Sum : ID := 0;
+		PT2_Sum : ID := 0;
 	begin
 		for I in 1 .. Count loop
 			pragma Loop_Invariant (I <= Count);
@@ -66,14 +100,19 @@ is
 				Rec : Data renames Input_Data(Data_Index(I));
 			begin
 				for Candidate in Rec.Lower_Bound .. Rec.Upper_Bound loop
-					if Is_Invalid(Candidate) then
-						Sum := Sum + Candidate;
+					if PT1_Is_Invalid(Candidate) then
+						PT1_Sum := PT1_Sum + Candidate;
+					end if;
+
+					if PT2_Is_Invalid(Candidate) then
+						PT2_Sum := PT2_Sum + Candidate;
 					end if;
 				end loop;
 			end; -- delcare
 		end loop; -- for Count
 
-		return Sum;
+		Put_Line("Part One: " & PT1_Sum'Image);
+		Put_Line("Part Two: " & PT2_Sum'Image);
 	end Solve;
 
 	procedure Run (File : in out File_Type)
@@ -89,8 +128,6 @@ is
 		Count : Natural := 0;
 
 		Dummy : Character; -- to consumme ',' and '-'
-
-		Result : ID;
 	begin
 		while not End_Of_File(File) loop
 			if Count < Max_Data then
@@ -108,9 +145,7 @@ is
 			end if; -- if Count
 		end loop; -- while
 
-		Result := Solve(Input_Data, Data_Index(Count));
-
-		Put_Line("Solution:" & Result'Image);
+		Solve(Input_Data, Data_Index(Count));
 	end Run;
 
 end Day_02;
